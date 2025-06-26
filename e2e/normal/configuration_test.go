@@ -451,7 +451,7 @@ func TestAllowDeleteProvisioningResoruce(t *testing.T) {
 
 }
 
-//func TestBasicConfigurationRegression(t *testing.T) {
+// func TestBasicConfigurationRegression(t *testing.T) {
 //	var retryTimes = 120
 //
 //	klog.Info("0. Create namespace")

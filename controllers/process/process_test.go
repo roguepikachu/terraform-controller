@@ -22,11 +22,10 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
 	"k8s.io/apimachinery/pkg/api/resource"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/apiutil"
@@ -140,7 +139,7 @@ func TestInitTFConfigurationMetaWithDeleteResource(t *testing.T) {
 					Name: "abc",
 				},
 				Spec: v1beta2.ConfigurationSpec{
-					DeleteResource: pointer.Bool(true),
+					DeleteResource: ptr.To(true),
 				},
 			},
 			meta: &TFConfigurationMeta{
@@ -154,7 +153,7 @@ func TestInitTFConfigurationMetaWithDeleteResource(t *testing.T) {
 					Name: "abc",
 				},
 				Spec: v1beta2.ConfigurationSpec{
-					DeleteResource: pointer.Bool(false),
+					DeleteResource: ptr.To(false),
 				},
 			},
 			meta: &TFConfigurationMeta{
@@ -888,7 +887,7 @@ func TestIsTFStateGenerated(t *testing.T) {
 	}
 
 	secret2 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-a",
 			Namespace: "default",
 		},
@@ -905,7 +904,7 @@ func TestIsTFStateGenerated(t *testing.T) {
 
 	tfStateData3, _ := base64.StdEncoding.DecodeString("H4sIAAAAAAAA/0SMwa7CIBBF9/0KMutH80ArDb9ijKHDYEhqMQO4afrvBly4POfc3H0QAt7EOaYNrDj/NS7E7ELi5/1XQI3/o4beM3F0K1ihO65xI/egNsLThLPRWi6agkR/CVIppaSZJrfgbBx6//1ItbxqyWDFfnTBlFNlpKaut+EYPgEAAP//xUXpvZsAAAA=")
 	secret3 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-a",
 			Namespace: "default",
 		},
@@ -925,7 +924,7 @@ func TestIsTFStateGenerated(t *testing.T) {
 
 	tfStateData4, _ := base64.StdEncoding.DecodeString("H4sIAAAAAAAA/4SQzarbMBCF934KoXUdPKNf+1VKCWNp5AocO8hyaSl592KlcBd3cZfnHPHpY/52QshfXI68b3IS+tuVK5dCaS+P+8ci4TbcULb94JJplZPAFte8MS18PQrKBO8Q+xk59SHa1AMA9M4YmoN3FGJ8M/azPs96yElcCkLIsG+V8sblnqOc3uXlRuvZ0GxSSuiCRUYbw2gGHRFGPxitEgJYQDQ0a68I2ChNo1cAZJ2bR20UtW8bsv55NuJRS94W2erXe5X5QQs3A/FZ4fhJaOwUgZTVMRjto1HGpSGSQuuD955hdDDPcR6NY1ZpQJ/YwagTRAvBpsi8LXn7Pa1U+ahfWHX/zWThYz9L4Otg3390r+5fAAAA//8hmcuNuQEAAA==")
 	secret4 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-a",
 			Namespace: "default",
 		},
@@ -1020,7 +1019,7 @@ func TestGetTFOutputs(t *testing.T) {
 	}
 
 	secret2 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-a",
 			Namespace: "default",
 		},
@@ -1046,7 +1045,7 @@ func TestGetTFOutputs(t *testing.T) {
 	}
 
 	secret3 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-b",
 			Namespace: "default",
 		},
@@ -1065,7 +1064,7 @@ func TestGetTFOutputs(t *testing.T) {
 	}
 
 	secret4 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-c",
 			Namespace: "default",
 		},
@@ -1092,7 +1091,7 @@ func TestGetTFOutputs(t *testing.T) {
 	}
 
 	secret5 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-d",
 			Namespace: "default",
 		},
@@ -1102,7 +1101,7 @@ func TestGetTFOutputs(t *testing.T) {
 		},
 	}
 	oldConnectionSecret5 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "connection-secret-d",
 			Namespace: "default",
 			Labels: map[string]string{
@@ -1110,7 +1109,7 @@ func TestGetTFOutputs(t *testing.T) {
 				"terraform.core.oam.dev/owned-by":   "configuration5",
 			},
 		},
-		TypeMeta: metav1.TypeMeta{Kind: "Secret"},
+		TypeMeta: v1.TypeMeta{Kind: "Secret"},
 		Data: map[string][]byte{
 			"container_id": []byte("something"),
 		},
@@ -1136,7 +1135,7 @@ func TestGetTFOutputs(t *testing.T) {
 	}
 
 	secret6 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-e",
 			Namespace: "default",
 		},
@@ -1146,7 +1145,7 @@ func TestGetTFOutputs(t *testing.T) {
 		},
 	}
 	oldConnectionSecret6 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "connection-secret-e",
 			Namespace: "default",
 			Labels: map[string]string{
@@ -1155,7 +1154,7 @@ func TestGetTFOutputs(t *testing.T) {
 				"terraform.core.oam.dev/owned-namespace": "default",
 			},
 		},
-		TypeMeta: metav1.TypeMeta{Kind: "Secret"},
+		TypeMeta: v1.TypeMeta{Kind: "Secret"},
 		Data: map[string][]byte{
 			"container_id": []byte("something"),
 		},
@@ -1181,10 +1180,10 @@ func TestGetTFOutputs(t *testing.T) {
 		},
 	}
 
-	namespaceA := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "a"}}
-	namespaceB := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "b"}}
+	namespaceA := &corev1.Namespace{ObjectMeta: v1.ObjectMeta{Name: "a"}}
+	namespaceB := &corev1.Namespace{ObjectMeta: v1.ObjectMeta{Name: "b"}}
 	secret7 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-f",
 			Namespace: "a",
 		},
@@ -1194,7 +1193,7 @@ func TestGetTFOutputs(t *testing.T) {
 		},
 	}
 	oldConnectionSecret7 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "connection-secret-e",
 			Namespace: "default",
 			Labels: map[string]string{
@@ -1203,7 +1202,7 @@ func TestGetTFOutputs(t *testing.T) {
 				"terraform.core.oam.dev/owned-namespace": "a",
 			},
 		},
-		TypeMeta: metav1.TypeMeta{Kind: "Secret"},
+		TypeMeta: v1.TypeMeta{Kind: "Secret"},
 		Data: map[string][]byte{
 			"container_id": []byte("something"),
 		},
@@ -1230,7 +1229,7 @@ func TestGetTFOutputs(t *testing.T) {
 	}
 
 	secret8 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-d",
 			Namespace: "default",
 		},
@@ -1240,14 +1239,14 @@ func TestGetTFOutputs(t *testing.T) {
 		},
 	}
 	oldConnectionSecret8 := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "connection-secret-d",
 			Namespace: "default",
 			Labels: map[string]string{
 				"terraform.core.oam.dev/created-by": "terraform-controller",
 			},
 		},
-		TypeMeta: metav1.TypeMeta{Kind: "Secret"},
+		TypeMeta: v1.TypeMeta{Kind: "Secret"},
 		Data: map[string][]byte{
 			"container_id": []byte("something"),
 		},
@@ -1402,7 +1401,7 @@ func TestUpdateApplyStatus(t *testing.T) {
 	}
 
 	configuration := &v1beta2.Configuration{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:       "a",
 			Namespace:  "b",
 			Generation: int64(1),
@@ -1471,7 +1470,7 @@ func TestAssembleAndTriggerJob(t *testing.T) {
 		Namespace: "b",
 	}
 
-	patches := gomonkey.ApplyFunc(apiutil.GVKForObject, func(obj runtime.Object, scheme *runtime.Scheme) (schema.GroupVersionKind, error) {
+	patches := gomonkey.ApplyFunc(apiutil.GVKForObject, func(_ runtime.Object, scheme *runtime.Scheme) (schema.GroupVersionKind, error) {
 		return schema.GroupVersionKind{}, apierrors.NewNotFound(schema.GroupResource{}, "")
 	})
 	defer patches.Reset()
@@ -1512,7 +1511,7 @@ func TestCheckWhetherConfigurationChanges(t *testing.T) {
 	}
 	ctx := context.Background()
 	cm := &corev1.ConfigMap{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "a",
 			Namespace: "b",
 		},
@@ -1602,8 +1601,8 @@ func TestGetApplyJob(t *testing.T) {
 		controllerNamespace = "ctrl-ns"
 		applyJobName        = "configuraion-apply"
 		jobNamespace        = "configuration-ns"
-		//legacyApplyJobName  = "legacy-job-name"
-		//legacyJobNamespace  = "legacy-job-ns"
+		// legacyApplyJobName  = "legacy-job-name"
+		// legacyJobNamespace  = "legacy-job-ns"
 	)
 
 	ctx := context.Background()
@@ -1622,13 +1621,13 @@ func TestGetApplyJob(t *testing.T) {
 		ControllerNamespace: jobNamespace,
 	}
 	baseJob := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      applyJobName,
 			Namespace: jobNamespace,
 		},
 	}
 	jobInCtrlNS := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      applyJobNameWithUID,
 			Namespace: controllerNamespace,
 		},
@@ -1724,7 +1723,7 @@ func TestRenderConfiguration(t *testing.T) {
 			name: "backend is not nil, configuration is hcl",
 			args: args{
 				configuration: &v1beta2.Configuration{
-					ObjectMeta: metav1.ObjectMeta{
+					ObjectMeta: v1.ObjectMeta{
 						Namespace: "n1",
 					},
 					Spec: v1beta2.ConfigurationSpec{
@@ -1765,7 +1764,7 @@ terraform {
 			name: "backend is nil, configuration is remote",
 			args: args{
 				configuration: &v1beta2.Configuration{
-					ObjectMeta: metav1.ObjectMeta{
+					ObjectMeta: v1.ObjectMeta{
 						Namespace: "n2",
 					},
 					Spec: v1beta2.ConfigurationSpec{
@@ -1818,7 +1817,7 @@ terraform {
 					Spec: v1beta2.ConfigurationSpec{
 						Backend: nil,
 					},
-					ObjectMeta: metav1.ObjectMeta{
+					ObjectMeta: v1.ObjectMeta{
 						UID:       "xxxx-xxxx",
 						Namespace: "n2",
 						Name:      "name",

@@ -24,11 +24,10 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	rbacv1 "k8s.io/api/rbac/v1"
 	apierrors "k8s.io/apimachinery/pkg/api/errors"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	k8stypes "k8s.io/apimachinery/pkg/types"
-	"k8s.io/utils/pointer"
+	"k8s.io/utils/ptr"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/client/fake"
@@ -66,7 +65,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	credentials, err := json.Marshal(&ak)
 	assert.Nil(t, err)
 	secret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "default",
 			Namespace: "default",
 		},
@@ -77,11 +76,11 @@ func TestConfigurationReconcile(t *testing.T) {
 	}
 
 	provider := &v1beta1.Provider{
-		TypeMeta: metav1.TypeMeta{
+		TypeMeta: v1.TypeMeta{
 			APIVersion: "terraform.core.oam.dev/v1beta2",
 			Kind:       "Provider",
 		},
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "default",
 			Namespace: "default",
 		},
@@ -106,7 +105,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	})
 	variables := &runtime.RawExtension{Raw: data}
 	configuration2 := &v1beta2.Configuration{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "a",
 			Namespace: "b",
 		},
@@ -137,7 +136,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	defer patches.Reset()
 
 	applyingJob2 := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      req.Name + "-" + string(types.TerraformApply),
 			Namespace: req.Namespace,
 		},
@@ -149,7 +148,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	stateData, _ := base64.StdEncoding.DecodeString("H4sIAAAAAAAA/4SQzarbMBCF934KoXUdPKNf+1VKCWNp5AocO8hyaSl592KlcBd3cZfnHPHpY/52QshfXI68b3IS+tuVK5dCaS+P+8ci4TbcULb94JJplZPAFte8MS18PQrKBO8Q+xk59SHa1AMA9M4YmoN3FGJ8M/azPs96yElcCkLIsG+V8sblnqOc3uXlRuvZ0GxSSuiCRUYbw2gGHRFGPxitEgJYQDQ0a68I2ChNo1cAZJ2bR20UtW8bsv55NuJRS94W2erXe5X5QQs3A/FZ4fhJaOwUgZTVMRjto1HGpSGSQuuD955hdDDPcR6NY1ZpQJ/YwagTRAvBpsi8LXn7Pa1U+ahfWHX/zWThYz9L4Otg3390r+5fAAAA//8hmcuNuQEAAA==")
 
 	backendSecret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "tfstate-default-a",
 			Namespace: "vela-system",
 		},
@@ -160,7 +159,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	}
 
 	variableSecret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      fmt.Sprintf(types.TFVariableSecret, req.Name),
 			Namespace: req.Namespace,
 		},
@@ -176,7 +175,7 @@ func TestConfigurationReconcile(t *testing.T) {
 
 	time := v1.NewTime(time.Now())
 	configuration3 := &v1beta2.Configuration{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:              "a",
 			Namespace:         "b",
 			DeletionTimestamp: &time,
@@ -191,7 +190,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	}
 
 	destroyJob3 := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "a-destroy",
 			Namespace: req.Namespace,
 		},
@@ -204,7 +203,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	r3.Client = fake.NewClientBuilder().WithScheme(s).WithObjects(secret, provider, configuration3, destroyJob3).Build()
 
 	configuration4 := &v1beta2.Configuration{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:              "a",
 			Namespace:         "b",
 			DeletionTimestamp: &time,
@@ -232,7 +231,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	}
 
 	destroyJob4 := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "a-destroy",
 			Namespace: req.Namespace,
 		},
@@ -245,7 +244,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	r4.Client = fake.NewClientBuilder().WithScheme(s).WithObjects(secret, provider, configuration4, destroyJob4, backendSecret).Build()
 
 	configuration5 := &v1beta2.Configuration{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:              "a",
 			Namespace:         "b",
 			DeletionTimestamp: &time,
@@ -261,7 +260,7 @@ func TestConfigurationReconcile(t *testing.T) {
 	}
 
 	destroyJob5 := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "a-destroy",
 			Namespace: req.Namespace,
 		},
@@ -275,7 +274,7 @@ func TestConfigurationReconcile(t *testing.T) {
 
 	// @step: create the setup for the job namespace tests
 	configuration6 := &v1beta2.Configuration{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:       "a",
 			Namespace:  "b",
 			Finalizers: []string{configurationFinalizer},
@@ -286,7 +285,7 @@ func TestConfigurationReconcile(t *testing.T) {
 		},
 	}
 
-	namespace := &corev1.Namespace{ObjectMeta: metav1.ObjectMeta{Name: "builds"}}
+	namespace := &corev1.Namespace{ObjectMeta: v1.ObjectMeta{Name: "builds"}}
 	r6 := &ConfigurationReconciler{ControllerNamespace: "builds"}
 	r6.Client = fake.NewClientBuilder().
 		WithScheme(s).
@@ -313,7 +312,7 @@ terraform {
 	}
 	varMap := map[string]string{"name": "abc"}
 	appliedEnvVariable := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      fmt.Sprintf(types.TFVariableSecret, req.Name),
 			Namespace: req.Namespace,
 		},
@@ -328,7 +327,7 @@ terraform {
 	}
 	appliedJobName := req.Name + "-" + string(types.TerraformApply)
 	appliedJob := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      appliedJobName,
 			Namespace: req.Namespace,
 			UID:       "111",
@@ -339,7 +338,7 @@ terraform {
 	}
 	varData, _ := json.Marshal(varMap)
 	configuration7 := &v1beta2.Configuration{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "a",
 			Namespace: "b",
 		},
@@ -492,7 +491,7 @@ func TestInitTFConfigurationMetaWithJobEnv(t *testing.T) {
 	}
 	credentials, err := json.Marshal(&ak)
 	secret := corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "default",
 			Namespace: "default",
 		},
@@ -502,11 +501,11 @@ func TestInitTFConfigurationMetaWithJobEnv(t *testing.T) {
 		Type: corev1.SecretTypeOpaque,
 	}
 	provider := v1beta1.Provider{
-		TypeMeta: metav1.TypeMeta{
+		TypeMeta: v1.TypeMeta{
 			APIVersion: "terraform.core.oam.dev/v1beta2",
 			Kind:       "Provider",
 		},
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "default",
 			Namespace: "default",
 		},
@@ -1172,7 +1171,7 @@ func TestTerraformDestroy(t *testing.T) {
 	}
 	// this is default provider if not specified in configuration.spec.providerRef
 	baseProvider := &v1beta1.Provider{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "default",
 			Namespace: "default",
 		},
@@ -1183,7 +1182,7 @@ func TestTerraformDestroy(t *testing.T) {
 	notReadyProvider.Status.State = types.ProviderIsNotReady
 
 	baseApplyJob := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      applyJobName,
 			Namespace: controllerNamespace,
 		},
@@ -1192,7 +1191,7 @@ func TestTerraformDestroy(t *testing.T) {
 	applyJobInLegacyNS.Namespace = legacyNamespace
 
 	baseDestroyJob := &batchv1.Job{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      destroyJobName,
 			Namespace: controllerNamespace,
 		},
@@ -1202,31 +1201,31 @@ func TestTerraformDestroy(t *testing.T) {
 
 	// Resources to be GC
 	baseConfigurationCM := &corev1.ConfigMap{
-		TypeMeta: metav1.TypeMeta{
+		TypeMeta: v1.TypeMeta{
 			Kind:       "ConfigMap",
 			APIVersion: "v1",
 		},
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      configurationCMName,
 			Namespace: controllerNamespace,
 		},
 	}
 	baseVariableSecret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      fmt.Sprintf(types.TFVariableSecret, secretSuffix),
 			Namespace: controllerNamespace,
 		},
 		Type: corev1.SecretTypeOpaque,
 	}
 	connectionSecret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      connectionSecretName,
 			Namespace: connectionSecretNS,
 		},
 		Type: corev1.SecretTypeOpaque,
 	}
 	backendSecret := &corev1.Secret{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      fmt.Sprintf("tfstate-default-%s", secretSuffix),
 			Namespace: "default",
 		},
@@ -1263,7 +1262,7 @@ func TestTerraformDestroy(t *testing.T) {
 	metaWithDeleteResourceIsFalse.DeleteResource = false
 
 	baseConfiguration := &v1beta2.Configuration{
-		ObjectMeta: metav1.ObjectMeta{
+		ObjectMeta: v1.ObjectMeta{
 			Name:      "base-conf",
 			Namespace: "default",
 		},
@@ -1279,7 +1278,7 @@ func TestTerraformDestroy(t *testing.T) {
 		Namespace: "default",
 	}
 	forceDeleteConfiguration := baseConfiguration.DeepCopy()
-	forceDeleteConfiguration.Spec.ForceDelete = pointer.Bool(true)
+	forceDeleteConfiguration.Spec.ForceDelete = ptr.To(true)
 
 	type args struct {
 		namespace     string
