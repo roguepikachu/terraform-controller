@@ -162,7 +162,9 @@ func TestGetProviderCredentials(t *testing.T) {
 	assert.Nil(t, k8sClient4Baidu.Create(ctx, secret))
 
 	var baiduProvider v1beta1.Provider
-	copier.Copy(&baiduProvider, &defaultProvider)
+	if err := copier.Copy(&baiduProvider, &defaultProvider); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 
 	baiduProvider.Spec.Provider = string(baidu)
 
@@ -184,13 +186,17 @@ func TestGetProviderCredentials(t *testing.T) {
 	assert.Nil(t, k8sClient4EC.Create(ctx, secret))
 
 	var ecProvider v1beta1.Provider
-	copier.Copy(&ecProvider, &defaultProvider)
+	if err := copier.Copy(&ecProvider, &defaultProvider); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 
 	ecProvider.Spec.Provider = string(ec)
 
 	// not supported provider
 	var notSupportedProvider v1beta1.Provider
-	copier.Copy(&notSupportedProvider, &defaultProvider)
+	if err := copier.Copy(&notSupportedProvider, &defaultProvider); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	notSupportedProvider.Spec.Provider = "abc"
 
 	// alibaba provider with wrong data
@@ -208,12 +214,17 @@ func TestGetProviderCredentials(t *testing.T) {
 	assert.Nil(t, k8sClient3.Create(ctx, secret3))
 
 	var alibabaProvider v1beta1.Provider
-	copier.CopyWithOption(&alibabaProvider, &defaultProvider, copier.Option{DeepCopy: true})
-	alibabaProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
+	if err := copier.CopyWithOption(&alibabaProvider, &defaultProvider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
+	const wrongDataSecretName = "wrong-data"
+	alibabaProvider.Spec.Credentials.SecretRef.Name = wrongDataSecretName
 
 	// baidu cloud provider with wrong data
 	var baiduProvider2 v1beta1.Provider
-	copier.CopyWithOption(&baiduProvider2, &defaultProvider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&baiduProvider2, &defaultProvider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	baiduProvider2.Spec.Provider = string(baidu)
 	baiduProvider2.Spec.Credentials.SecretRef.Name = "wrong-data"
 
@@ -438,7 +449,9 @@ func TestGetProviderCredentials4EC(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {
@@ -538,7 +551,9 @@ func TestGetProviderCredentials4VSphere(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {
@@ -639,7 +654,9 @@ func TestGetProviderCredentials4TencentCloud(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {
@@ -696,7 +713,9 @@ func TestGetProviderFromConfiguration(t *testing.T) {
 	k8sClient1 := fake.NewClientBuilder().Build()
 
 	s := runtime.NewScheme()
-	v1beta1.AddToScheme(s)
+	if err := v1beta1.AddToScheme(s); err != nil {
+		t.Fatal(err)
+	}
 	provider := &v1beta1.Provider{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "terraform.core.oam.dev/v1beta1",
@@ -822,7 +841,9 @@ func TestGetProviderCredentials4UCloud(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {
@@ -924,7 +945,9 @@ func TestGetProviderCredentials4GCP(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {
@@ -1026,7 +1049,9 @@ func TestGetProviderCredentials4AWS(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {
@@ -1130,7 +1155,9 @@ func TestGetProviderCredentials4Azure(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {
@@ -1216,7 +1243,9 @@ func TestGetProviderCredentials4Custom(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {
@@ -1304,7 +1333,9 @@ func TestGetProviderCredentials4HuaweiCloud(t *testing.T) {
 	assert.Nil(t, k8sClient2.Create(ctx, secret2))
 
 	var badProvider v1beta1.Provider
-	copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true})
+	if err := copier.CopyWithOption(&badProvider, &provider, copier.Option{DeepCopy: true}); err != nil {
+		t.Errorf("failed to copy provider: %v", err)
+	}
 	badProvider.Spec.Credentials.SecretRef.Name = "wrong-data"
 
 	type args struct {

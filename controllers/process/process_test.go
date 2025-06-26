@@ -37,8 +37,12 @@ var k8sClient client.Client
 
 func TestInitTFConfigurationMeta(t *testing.T) {
 	req := ctrl.Request{}
-	req.Namespace = "default"
-	req.Name = "abc"
+	const (
+		defaultNamespace = "default"
+		exampleName      = "abc"
+	)
+	req.Namespace = defaultNamespace
+	req.Name = exampleName
 
 	completeConfiguration := v1beta2.Configuration{
 		ObjectMeta: v1.ObjectMeta{
@@ -534,7 +538,9 @@ func TestPrepareTFVariables(t *testing.T) {
 func TestCheckProvider(t *testing.T) {
 	ctx := context.Background()
 	scheme := runtime.NewScheme()
-	v1beta2.AddToScheme(scheme)
+	if err := v1beta2.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
 
 	k8sClient1 := fake.NewClientBuilder().WithScheme(scheme).Build()
 
@@ -1391,7 +1397,9 @@ func TestUpdateApplyStatus(t *testing.T) {
 	}
 	ctx := context.Background()
 	s := runtime.NewScheme()
-	v1beta2.AddToScheme(s)
+	if err := v1beta2.AddToScheme(s); err != nil {
+		t.Fatal(err)
+	}
 
 	configuration := &v1beta2.Configuration{
 		ObjectMeta: metav1.ObjectMeta{
@@ -1600,9 +1608,15 @@ func TestGetApplyJob(t *testing.T) {
 
 	ctx := context.Background()
 	s := runtime.NewScheme()
-	v1beta1.AddToScheme(s)
-	v1beta2.AddToScheme(s)
-	batchv1.AddToScheme(s)
+	if err := v1beta1.AddToScheme(s); err != nil {
+		t.Fatal(err)
+	}
+	if err := v1beta2.AddToScheme(s); err != nil {
+		t.Fatal(err)
+	}
+	if err := batchv1.AddToScheme(s); err != nil {
+		t.Fatal(err)
+	}
 	baseMeta := TFConfigurationMeta{
 		ApplyJobName:        applyJobName,
 		ControllerNamespace: jobNamespace,
@@ -1866,7 +1880,9 @@ terraform {
 func TestCheckGitCredentialsSecretReference(t *testing.T) {
 	ctx := context.Background()
 	scheme := runtime.NewScheme()
-	corev1.AddToScheme(scheme)
+	if err := corev1.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
 	k8sClient := fake.NewClientBuilder().WithScheme(scheme).Build()
 
 	privateKey := []byte("aaa")
@@ -1995,7 +2011,9 @@ func TestCheckGitCredentialsSecretReference(t *testing.T) {
 func TestCheckTerraformCredentialsSecretReference(t *testing.T) {
 	ctx := context.Background()
 	scheme := runtime.NewScheme()
-	corev1.AddToScheme(scheme)
+	if err := corev1.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
 	k8sClient := fake.NewClientBuilder().WithScheme(scheme).Build()
 
 	credentialstfrcjson := []byte("tfcreds")
@@ -2105,7 +2123,9 @@ func TestCheckTerraformCredentialsSecretReference(t *testing.T) {
 func TestCheckTerraformRCConfigMapReference(t *testing.T) {
 	ctx := context.Background()
 	scheme := runtime.NewScheme()
-	corev1.AddToScheme(scheme)
+	if err := corev1.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
 	k8sClient := fake.NewClientBuilder().WithScheme(scheme).Build()
 
 	configMap := &corev1.ConfigMap{
@@ -2210,7 +2230,9 @@ func TestCheckTerraformRCConfigMapReference(t *testing.T) {
 func TestTerraformCredentialsHelperConfigMap(t *testing.T) {
 	ctx := context.Background()
 	scheme := runtime.NewScheme()
-	corev1.AddToScheme(scheme)
+	if err := corev1.AddToScheme(scheme); err != nil {
+		t.Fatal(err)
+	}
 	k8sClient := fake.NewClientBuilder().WithScheme(scheme).Build()
 
 	configMap := &corev1.ConfigMap{
