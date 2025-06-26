@@ -23,7 +23,7 @@ import (
 )
 
 // wrongDataSecretName is the name used for invalid secret references in tests.
-const wrongDataSecretName = wrongDataSecretName
+const wrongDataSecretName = "wrong-data"
 
 func TestCheckAlibabaCloudCredentials(t *testing.T) {
 	type credentials struct {
