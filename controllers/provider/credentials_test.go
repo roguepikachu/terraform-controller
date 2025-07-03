@@ -109,10 +109,8 @@ func TestGetProviderCredentials(t *testing.T) {
 	}
 	assert.Nil(t, k8sClient1.Create(ctx, secret))
 
-	patches := ApplyMethod(reflect.TypeOf(&sts.Client{}), "GetCallerIdentity", func(_ *sts.Client, request *sts.GetCallerIdentityRequest) (response *sts.GetCallerIdentityResponse, err error) {
-		response = nil
-		err = nil
-		return
+	patches := ApplyFunc(checkAlibabaCloudCredentials, func(region, accessKeyID, accessKeySecret, stsToken string) error {
+		return nil
 	})
 	defer patches.Reset()
 
